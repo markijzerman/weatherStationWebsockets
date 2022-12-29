@@ -1,0 +1,44 @@
+<html>
+  <body>
+    <h1>FIBER Weather Station readings</h1>
+    <p>Connect with websockets to ws://weatherstation.local/sensor at port 8001 for values. Use 0.0.0.0/sensor with port 8001 in TouchDesigner.</p>
+    <p>This website is served at http://weatherstation.local/8000.</p>
+    <br>
+    <h1>Current readings</h1>
+    <p>Temperature: <span id="temperature"></span></p>
+    <p>Lux: <span id="lux"></span></p>
+    <p>Pressure: <span id="pressure"></span></p>
+    <p>Humidity: <span id="humidity"></span></p>
+    <p>Relative humidity: <span id="relative_humidity"></span></p>
+    <p>Dewpoint: <span id="dewpoint"></span></p>
+    <p>Rain: <span id="rain"></span></p>
+    <p>Rain total: <span id="rain_total"></span></p>
+    <p>Updated wind rain: <span id="updated_wind_rain"></span></p>
+    <p>Wind direction: <span id="wind_direction"></span></p>
+    <p>Wind speed: <span id="wind_speed"></span></p>
+
+    <script>
+      // open a WebSocket connection
+      const socket = new WebSocket("ws://localhost:8001/sensor");
+
+        // when a message is received from the server
+        socket.onmessage = function(event) {
+        // parse the message as a JSON object
+        const reading = JSON.parse(event.data);
+
+        // update the elements on the page with the sensor readings
+        document.getElementById("temperature").textContent = reading.temperature;
+        document.getElementById("lux").textContent = reading.lux;
+        document.getElementById("pressure").textContent = reading.pressure;
+        document.getElementById("humidity").textContent = reading.humidity;
+        document.getElementById("relative_humidity").textContent = reading.relative_humidity;
+        document.getElementById("dewpoint").textContent = reading.dewpoint;
+        document.getElementById("rain").textContent = reading.rain;
+        document.getElementById("rain_total").textContent = reading.rain_total;
+        document.getElementById("updated_wind_rain").textContent = reading.updated_wind_rain;
+        document.getElementById("wind_direction").textContent = reading.wind_direction;
+        document.getElementById("wind_speed").textContent = reading.wind_speed;
+        }
+    </script>
+  </body>
+</html>
