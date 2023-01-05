@@ -5,11 +5,16 @@ import json
 import websockets
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import threading
+import socket
 
 updateSpeed = 0.1
 
 sensor = weatherhat.WeatherHAT()
 sensor.temperature_offset = -15 # fix that this is the right amount
+
+#hostname = socket.gethostname()
+local_ip = socket.gethostbyname('weatherstation.local')
+print(local_ip)
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -29,7 +34,8 @@ async def sensor_handler(websocket, path):
         # get a random sensor reading
         #reading = random.random()
         sensor.update(interval=updateSpeed)
-        readings = {'temperature':sensor.temperature,
+        readings = {'currentIP':local_ip,
+                    'temperature':sensor.temperature,
                     'lux':sensor.lux,
                     'pressure':sensor.pressure,
                     'humidity':sensor.humidity,
@@ -53,13 +59,13 @@ async def handler(websocket, path):
 
 async def main():
     # start the HTTP server
-    server = HTTPServer(('weatherstation.local', 8000), RequestHandler)
+    server = HTTPServer(('0.0.0.0', 8000), RequestHandler)
     print("Listening on http://weatherstation.local:8000/")
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.start()
 
     # start the WebSocket server
-    ws_server = await websockets.serve(handler, 'localhost', 8001)
+    ws_server = await websockets.serve(handler, '0.0.0.0', 8001)
     print("Listening on ws://localhost:8001/sensor")
 
     # wait until the servers are closed
