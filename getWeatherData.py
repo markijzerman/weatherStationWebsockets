@@ -7,14 +7,18 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import threading
 import socket
 
-updateSpeed = 0.1
+updateSpeed = 0.5
 
 sensor = weatherhat.WeatherHAT()
-sensor.temperature_offset = -15 # fix that this is the right amount
+#sensor.temperature_offset = -10 # fix that this is the right amount
 
-#hostname = socket.gethostname()
-local_ip = socket.gethostbyname('weatherstation.local')
-print(local_ip)
+
+
+def getLocalIP():
+    #hostname = socket.gethostname()
+    local_ip = socket.gethostbyname('weatherstation.local')
+    #print(local_ip)
+    return(local_ip)
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -34,7 +38,7 @@ async def sensor_handler(websocket, path):
         # get a random sensor reading
         #reading = random.random()
         sensor.update(interval=updateSpeed)
-        readings = {'currentIP':local_ip,
+        readings = {'currentIP':getLocalIP(),
                     'temperature':sensor.temperature,
                     'lux':sensor.lux,
                     'pressure':sensor.pressure,
