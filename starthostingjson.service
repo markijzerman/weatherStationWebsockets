@@ -1,0 +1,13 @@
+[Unit]
+Description=JSON of Weatherstation
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/home/rain/Desktop/weatherstation/readings
+ExecStart=python -m http.server 8002
+Restart=always
+User=rain
+
+[Install]
+WantedBy=multi-user.target
