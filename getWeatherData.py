@@ -10,7 +10,7 @@ import socket
 updateSpeed = 0.5
 
 sensor = weatherhat.WeatherHAT()
-#sensor.temperature_offset = -10 # fix that this is the right amount
+sensor.temperature_offset = -10 # fix that this is the right amount
 
 
 
@@ -56,6 +56,11 @@ async def sensor_handler(websocket, path):
 
         # wait 1 second before getting the next reading
         await asyncio.sleep(updateSpeed)
+
+        # also dump json to a file
+        json_tosave = json.dumps(readings)
+        with open("readings/readings.json", "w") as outfile:
+            outfile.write(json_tosave)
 
 async def handler(websocket, path):
     if path == '/sensor':
