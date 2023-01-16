@@ -6,6 +6,10 @@ import websockets
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import threading
 import socket
+from netifaces import AF_INET, AF_INET6, AF_LINK, AF_PACKET, AF_BRIDGE
+import netifaces as ni
+
+localIP = ni.ifaddresses('eth0')[AF_INET][0]['addr']
 
 updateSpeed = 0.5
 
@@ -38,7 +42,7 @@ async def sensor_handler(websocket, path):
         # get a random sensor reading
         #reading = random.random()
         sensor.update(interval=updateSpeed)
-        readings = {'currentIP':getLocalIP(),
+        readings = {'currentIP':localIP,
                     'temperature':sensor.temperature,
                     'lux':sensor.lux,
                     'pressure':sensor.pressure,
@@ -51,7 +55,8 @@ async def sensor_handler(websocket, path):
                     'wind_direction':sensor.wind_direction,
                     'wind_speed':sensor.wind_speed}
 
-        # send the reading over the websocket
+        #print(readings)
+	# send the reading over the websocket
         await websocket.send(json.dumps(readings))
 
         # wait 1 second before getting the next reading
